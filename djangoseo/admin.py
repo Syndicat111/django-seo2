@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-
 import importlib
 
 from django import forms
@@ -12,68 +11,60 @@ from django.forms.models import fields_for_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.conf import settings
-
 from djangoseo.utils import get_seo_content_types
 from djangoseo.systemviews import get_seo_views
-
 
 # TODO Use groups as fieldsets
 
 # Varients without sites support
-
 widget_class_path = getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET', 'django.forms.widgets.Textarea')
 widget_config = getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET_CONFIG', {})
 splitted_class_path = widget_class_path.rsplit('.', 1)
-WIDGET_CLASS = getattr(importlib.import_module(splitted_class_path)[0], splitted_class_path[1])
+WIDGET_CLASS = getattr(importlib.import_module(splitted_class_path[0]), splitted_class_path[1])
+widget_fileds = dict((field, WIDGET_CLASS(**widget_config)) for field in getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET_FILDS', []))
 
 
-class WidgetAdmin(admin.ModelAdmin):
-    widgets = {
-        'TextArea': WIDGET_CLASS(**widget_config)
-    }
-
-
-class PathMetadataAdmin(WidgetAdmin):
+class PathMetadataAdmin(admin.ModelAdmin):
     list_display = ('_path',)
     search_fields = ('_path',)
 
 
-class ModelInstanceMetadataAdmin(WidgetAdmin):
+class ModelInstanceMetadataAdmin(admin.ModelAdmin):
     list_display = ('_content_type', '_object_id', '_path')
     search_fields = ('_path', '_content_type__name')
 
 
-class ModelMetadataAdmin(WidgetAdmin):
+class ModelMetadataAdmin(admin.ModelAdmin):
     list_display = ('_content_type',)
     search_fields = ('_content_type__name',)
 
 
-class ViewMetadataAdmin(WidgetAdmin):
+class ViewMetadataAdmin(admin.ModelAdmin):
     list_display = ('_view',)
     search_fields = ('_view',)
 
 
 # Varients with sites support
 
-class SitePathMetadataAdmin(WidgetAdmin):
+class SitePathMetadataAdmin(admin.ModelAdmin):
     list_display = ('_path', '_site')
     list_filter = ('_site',)
     search_fields = ('_path',)
 
 
-class SiteModelInstanceMetadataAdmin(WidgetAdmin):
+class SiteModelInstanceMetadataAdmin(admin.ModelAdmin):
     list_display = ('_path', '_content_type', '_object_id', '_site')
     list_filter = ('_site', '_content_type')
     search_fields = ('_path', '_content_type__name')
 
 
-class SiteModelMetadataAdmin(WidgetAdmin):
+class SiteModelMetadataAdmin(admin.ModelAdmin):
     list_display = ('_content_type', '_site')
     list_filter = ('_site',)
     search_fields = ('_content_type__name',)
 
 
-class SiteViewMetadataAdmin(WidgetAdmin):
+class SiteViewMetadataAdmin(admin.ModelAdmin):
     list_display = ('_view', '_site')
     list_filter = ('_site',)
     search_fields = ('_view',)
@@ -199,6 +190,7 @@ def get_model_form(metadata_class):
         class Meta:
             model = model_class
             fields = _fields
+            widgets = widget_fileds
 
         def clean__content_type(self):
             value = self.cleaned_data['_content_type']
@@ -234,6 +226,7 @@ def get_modelinstance_form(metadata_class):
         class Meta:
             model = model_class
             fields = _fields
+            widgets = widget_fileds
 
     return ModelMetadataForm
 
@@ -250,6 +243,7 @@ def get_path_form(metadata_class):
         class Meta:
             model = model_class
             fields = _fields
+            widgets = widget_fileds
 
     return ModelMetadataForm
 
@@ -275,6 +269,7 @@ def get_view_form(metadata_class):
         class Meta:
             model = model_class
             fields = _fields
+            widgets = widget_fileds
 
     return ModelMetadataForm
 
