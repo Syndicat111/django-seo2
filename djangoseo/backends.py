@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import collections
 
-from django.urls  import resolve
 from django.utils.translation import ugettext_lazy as _
 from django.db.utils import IntegrityError
 from django.conf import settings
@@ -248,7 +247,7 @@ class ViewBackend(MetadataBackend):
     def get_instances(self, queryset, path, context):
         view_name = ""
         if path is not None:
-            view_name = resolve(path).view_name
+            view_name = resolve_to_name(path)
         return queryset.filter(_view=view_name or "")
 
     def get_model(self, options):
@@ -329,7 +328,6 @@ class ModelInstanceBackend(MetadataBackend):
             _content_type = models.ForeignKey(
                 ContentType,
                 verbose_name=_("model"),
-                on_delete=models.CASCADE
             )
 
             _object_id = models.PositiveIntegerField(
@@ -427,7 +425,6 @@ class ModelBackend(MetadataBackend):
             _content_type = models.ForeignKey(
                 ContentType,
                 verbose_name=_("model"),
-                on_delete=models.CASCADE
             )
 
             if options.use_sites:
@@ -451,7 +448,7 @@ class ModelBackend(MetadataBackend):
             objects = self.get_manager(options)()
 
             def __str__(self):
-                return str(self._content_type)
+                return self._content_type
 
             def _process_context(self, context):
                 """ Use the given model instance as context for rendering
