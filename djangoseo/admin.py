@@ -21,7 +21,7 @@ widget_class_path = getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET', 'django.for
 widget_config = getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET_CONFIG', {})
 splitted_class_path = widget_class_path.rsplit('.', 1)
 WIDGET_CLASS = getattr(importlib.import_module(splitted_class_path[0]), splitted_class_path[1])
-widget_fileds = dict((field, WIDGET_CLASS(**widget_config)) for field in getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET_FILDS', []))
+widget_fileds = dict((field, WIDGET_CLASS(**widget_config)) for field in getattr(settings, 'SEO_MODULE_TEXT_AREA_WIDGET_FIELDS', []))
 
 
 class PathMetadataAdmin(admin.ModelAdmin):
