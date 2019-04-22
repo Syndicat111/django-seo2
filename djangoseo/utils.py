@@ -6,7 +6,7 @@ from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 from django.contrib.contenttypes.models import ContentType
-from django.urls import (URLResolver, URLPattern, Resolver404, get_resolver)
+from django.conf.urls import (URLResolver, URLPattern, Resolver404, get_resolver)
 
 
 class NotSet(object):
