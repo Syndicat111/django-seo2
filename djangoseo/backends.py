@@ -83,7 +83,7 @@ class MetadataBaseModel(models.Model):
         return value
 
 
-class BaseManager(models.Manager):
+class BaseManager(models.Manager):str(self._content_type)
     def on_current_site(self, site=None):
         if isinstance(site, Site):
             site_id = site.id
@@ -448,7 +448,7 @@ class ModelBackend(MetadataBackend):
             objects = self.get_manager(options)()
 
             def __str__(self):
-                return self._content_type
+                return str(self._content_type)
 
             def _process_context(self, context):
                 """ Use the given model instance as context for rendering
