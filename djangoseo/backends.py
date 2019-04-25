@@ -83,7 +83,7 @@ class MetadataBaseModel(models.Model):
         return value
 
 
-class BaseManager(models.Manager):str(self._content_type)
+class BaseManager(models.Manager):
     def on_current_site(self, site=None):
         if isinstance(site, Site):
             site_id = site.id
