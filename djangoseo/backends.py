@@ -1,3 +1,4 @@
+# * coding: UTF-8
 from __future__ import unicode_literals
 
 import collections
@@ -448,7 +449,7 @@ class ModelBackend(MetadataBackend):
             objects = self.get_manager(options)()
 
             def __str__(self):
-                return str(self._content_type)
+                return unicode(self._content_type)
 
             def _process_context(self, context):
                 """ Use the given model instance as context for rendering
